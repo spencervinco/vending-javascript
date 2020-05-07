@@ -1,0 +1,14 @@
+{
+  "name": "tdd_test",
+  "version": "1.0.0",
+  "description": "",
+  "dependencies": {
+    "jest": "^26.0.1"
+  },
+  "devDependencies": {},
+    "scripts": {
+      "test": "jest"
+    },
+  "author": "",
+  "license": "ISC"
+}
