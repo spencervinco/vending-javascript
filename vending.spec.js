@@ -48,7 +48,7 @@ test('odd coins are returned from rejectedCoins function', () => {
 });
 
 //Select Product
-describe("Select Product", () => {
+describe.only("Select Product", () => {
     test('should display THANK YOU after selecting a product', () => {
         let vendingRef = new Vending();
         vendingRef.insertCoin('quarter');
@@ -92,5 +92,41 @@ describe("Select Product", () => {
         vendingRef.selectProduct(2);
         expect(vendingRef.getDisplay()).toBe('PRICE $0.50');
     });
+
+    test('should display price of candy if balance is less than price', () => {
+        let vendingRef = new Vending();
+        vendingRef.selectProduct(3);
+        expect(vendingRef.getDisplay()).toBe('PRICE $0.65');
+    });
+
+    test('should display price of product if balance is less than price', () => {
+        let vendingRef = new Vending();
+        vendingRef.insertCoin('quarter');
+        vendingRef.selectProduct(3);
+        expect(vendingRef.getDisplay()).toBe('PRICE $0.65');
+        expect(vendingRef.getDisplay()).toBe("balance: 0.25");
+    });
+
+    test('should display price of product if balance is less than price', () => {
+        let vendingRef = new Vending();
+        vendingRef.insertCoin('quarter');
+        vendingRef.insertCoin('quarter');
+        vendingRef.insertCoin('dime');
+        vendingRef.selectProduct(2);
+
+        expect(vendingRef.getChange()).toEqual(["dime"]);
+    });
+
+    test('should display price of product if balance is less than price', () => {
+        let vendingRef = new Vending();
+        vendingRef.insertCoin('quarter');
+        vendingRef.insertCoin('quarter');
+        vendingRef.insertCoin('quarter');
+        vendingRef.insertCoin('dime'); //.85
+        vendingRef.selectProduct(3);  //.65
+//change 20
+        expect(vendingRef.getChange()).toEqual(["dime", "dime"]);
+    });
 });
 
+//keep the change you filthy animal.

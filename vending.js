@@ -7,10 +7,23 @@ class Vending {
             "dime": .1,
             "quarter": .25
         };
+        this.coinReverseLookup = {
+            "0.05": "nickle",
+            "0.1": "dime",
+            "0.25": "quarter"
+        };
         this.productLookUp = {
             "1": {
                 name: "cola",
                 price: 1.00
+            },
+            "2": {
+                name: "chips",
+                price: .5
+            },
+            "3": {
+                name: "candy",
+                price: .65
             }
         };
         this.rejectedCoins = [];
@@ -43,6 +56,9 @@ class Vending {
             this.displayText = "PRICE $" + selectedProduct.price.toFixed(2);
         }
         else {
+            if (this.balance > selectedProduct.price) {
+                this.rejectedCoins.push(this.coinReverseLookup[(((this.balance * 100) - (selectedProduct.price * 100)) / 100).toString()]);
+            }
             this.balance = 0;
             this.displayText = "THANK YOU";
         }
