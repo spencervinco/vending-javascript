@@ -7,23 +7,42 @@ class Vending {
             "dime": .1,
             "quarter": .25
         };
-        this.coinReverseLookup = {
-            "0.05": "nickle",
-            "0.1": "dime",
-            "0.25": "quarter"
-        };
+
+        this.coinReverseLookupArray = [
+            { 
+                coinValue: .25,
+                coinName: "quarter"
+            },
+            { 
+                coinValue: 0.1,
+                coinName: "dime" 
+            },
+            {
+                coinValue: 0.05,
+                coinName: "nickle"
+            }
+        ]
+
         this.productLookUp = {
             "1": {
                 name: "cola",
-                price: 1.00
+                price: 1.00,
+                inventory: 5
             },
             "2": {
                 name: "chips",
-                price: .5
+                price: .5,
+                inventory: 5
             },
             "3": {
                 name: "candy",
-                price: .65
+                price: .65,
+                inventory: 5
+            },
+            "4": {
+                name: "chocolate",
+                price: .20,
+                inventory: 0
             }
         };
         this.rejectedCoins = [];
@@ -45,10 +64,25 @@ class Vending {
         } else {
             this.balance += identifiedCoin;
         }
-
     }
     getChange = () => {
         return this.rejectedCoins;
+    }
+
+    makeChange = (remainingBalance) => {
+        while (remainingBalance > 0) {
+            if (remainingBalance === 0) {
+                break;
+            }
+            for (let i = 0; i < this.coinReverseLookupArray.length; i++) {
+                const currentCoin = this.coinReverseLookupArray[i];
+                if (currentCoin.coinValue <= remainingBalance) {
+                    this.rejectedCoins.push(currentCoin.coinName);
+                    remainingBalance -= currentCoin.coinValue;
+                    break;
+                }
+            }
+        }
     }
     selectProduct = (productNumber) => {
         let selectedProduct = this.productLookUp[parseInt(productNumber)];
@@ -57,11 +91,18 @@ class Vending {
         }
         else {
             if (this.balance > selectedProduct.price) {
-                this.rejectedCoins.push(this.coinReverseLookup[(((this.balance * 100) - (selectedProduct.price * 100)) / 100).toString()]);
+                let remainingBalance = (((this.balance * 100) - (selectedProduct.price * 100)) / 100);
+                this.makeChange(remainingBalance);
             }
+            selectedProduct.inventory -= 1;
             this.balance = 0;
             this.displayText = "THANK YOU";
         }
+    }
+    returnCoins = () => {
+        let remainingBalance = this.balance;
+        this.makeChange(remainingBalance);
+        this.balance = 0;
     }
 }
 

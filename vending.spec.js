@@ -48,7 +48,7 @@ test('odd coins are returned from rejectedCoins function', () => {
 });
 
 //Select Product
-describe.only("Select Product", () => {
+describe("Select Product", () => {
     test('should display THANK YOU after selecting a product', () => {
         let vendingRef = new Vending();
         vendingRef.insertCoin('quarter');
@@ -107,7 +107,7 @@ describe.only("Select Product", () => {
         expect(vendingRef.getDisplay()).toBe("balance: 0.25");
     });
 
-    test('should display price of product if balance is less than price', () => {
+    test('should return dime as change when product selected is 10 less than balance', () => {
         let vendingRef = new Vending();
         vendingRef.insertCoin('quarter');
         vendingRef.insertCoin('quarter');
@@ -117,7 +117,7 @@ describe.only("Select Product", () => {
         expect(vendingRef.getChange()).toEqual(["dime"]);
     });
 
-    test('should display price of product if balance is less than price', () => {
+    test('should return two dimes as change when product selected is 20 less than balance', () => {
         let vendingRef = new Vending();
         vendingRef.insertCoin('quarter');
         vendingRef.insertCoin('quarter');
@@ -126,6 +126,42 @@ describe.only("Select Product", () => {
         vendingRef.selectProduct(3);  //.65
 //change 20
         expect(vendingRef.getChange()).toEqual(["dime", "dime"]);
+    });
+
+    test('should return the inserted amount of money/coins if no product is purchased', () => {
+        let vendingRef = new Vending();
+        vendingRef.insertCoin('quarter');
+        vendingRef.insertCoin('quarter');
+        vendingRef.returnCoins();
+        expect(vendingRef.getChange()).toEqual(["quarter", "quarter"]);
+    });
+
+    test('should set balance to zero if return coins button is pressed', () => {
+        let vendingRef = new Vending();
+        vendingRef.insertCoin('quarter');
+        vendingRef.insertCoin('quarter');
+        vendingRef.returnCoins();
+        expect(vendingRef.balance).toBe(0.00);
+    });
+    
+    test('should reduce inventory when product is purchased', () => {
+        let vendingRef = new Vending();
+        vendingRef.insertCoin('quarter');
+        vendingRef.insertCoin('quarter');
+        vendingRef.insertCoin('quarter');
+        vendingRef.insertCoin('dime'); //.85
+        let startingInventory = vendingRef.productLookUp["3"].inventory;
+        vendingRef.selectProduct(3);  //.65
+        expect(vendingRef.productLookUp["3"].inventory).toBe(startingInventory - 1);
+    });
+
+    //It was stuck in an ever-going loop - needs to be fixed 
+    test('should display the SOLD OUT message when a product is out of stock', () => {
+        let vendingRef = new Vending();
+        vendingRef.insertCoin('quarter');
+        vendingRef.insertCoin('dime'); 
+        vendingRef.selectProduct(4); 
+        expect(vendingRef.getDisplay()).toBe('SOLD OUT');
     });
 });
 
