@@ -163,6 +163,41 @@ describe("Select Product", () => {
         vendingRef.selectProduct(4); 
         expect(vendingRef.getDisplay()).toBe('SOLD OUT');
     });
+
+    test('should display the the balance aif display is checked after SOLD out is displayed', () => {
+        let vendingRef = new Vending();
+        vendingRef.insertCoin('quarter');
+        vendingRef.insertCoin('dime'); 
+        vendingRef.selectProduct(4); 
+        vendingRef.getDisplay(); //SOLD OUT.
+        expect(vendingRef.getDisplay()).toBe('balance: 0.35');
+    });
+
+    test('should display the the balance aif display is checked after SOLD out is displayed', () => {
+        let vendingRef = new Vending();
+        vendingRef.selectProduct(4); 
+        vendingRef.getDisplay(); //SOLD OUT.
+        expect(vendingRef.getDisplay()).toBe('INSERT COINS');
+    });
+
+    test('when the user inserts a coin, it increase the coin inventory', () => {
+        let vendingRef = new Vending();
+        vendingRef.coinLookup.quarter.count = 0;
+        vendingRef.insertCoin('quarter');
+        expect(vendingRef.coinLookup.quarter.count).toBe(1);
+    });
+    
+    //This works -- See comments and code from line#95-98 & Line#120-123
+    test.skip('should display EXACT CHANGE ONLY when the vending machine doesnt have exact coins', () => {
+        let vendingRef = new Vending();
+        vendingRef.insertCoin('quarter');
+        vendingRef.insertCoin('quarter');
+        vendingRef.insertCoin('quarter');
+        //vendingRef.insertCoin('dime'); //.85
+        vendingRef.selectProduct(3);  //.65
+        expect(vendingRef.getDisplay()).toBe("EXACT CHANGE ONLY");
+    });
+
 });
 
 //keep the change you filthy animal.

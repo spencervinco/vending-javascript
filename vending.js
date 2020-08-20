@@ -3,23 +3,35 @@ class Vending {
     constructor() {
         this.balance = 0.0;
         this.coinLookup = {
-            "nickle": .05,
-            "dime": .1,
-            "quarter": .25
+            "nickle": {
+                value: .05,
+                count: 10 //1 - Last Test Scenario  
+            },
+            "dime": {
+                value: .1,
+                count: 10  //0 - Last Test Scenario    
+            },
+            "quarter": {
+                value: .25,
+                count: 10 //10 - Last Test Scenario  
+            }
         };
 
         this.coinReverseLookupArray = [
             { 
-                coinValue: .25,
-                coinName: "quarter"
+                coinValue: 25,
+                coinName: "quarter",
+                count: 10  
             },
             { 
-                coinValue: 0.1,
-                coinName: "dime" 
+                coinValue: 10,
+                coinName: "dime",
+                count: 10 //0 - Last Test Scenario  
             },
             {
-                coinValue: 0.05,
-                coinName: "nickle"
+                coinValue: 5,
+                coinName: "nickle",
+                count: 10 //1 - Last Test Scenario     
             }
         ]
 
@@ -62,7 +74,8 @@ class Vending {
         if (!identifiedCoin) {
             this.rejectedCoins.push(coinName);
         } else {
-            this.balance += identifiedCoin;
+            this.balance += identifiedCoin.value;
+            this.coinLookup[coinName].count += 1;
         }
     }
     getChange = () => {
@@ -70,6 +83,7 @@ class Vending {
     }
 
     makeChange = (remainingBalance) => {
+        remainingBalance = remainingBalance * 100
         while (remainingBalance > 0) {
             if (remainingBalance === 0) {
                 break;
@@ -78,11 +92,17 @@ class Vending {
                 const currentCoin = this.coinReverseLookupArray[i];
                 if (currentCoin.coinValue <= remainingBalance) {
                     this.rejectedCoins.push(currentCoin.coinName);
+                    //for EXACT CHANGE ONLY scenario - Last TestCase
+                    if (currentCoin.count - 1 < 1) {
+                        return false;
+                    }
+                    currentCoin.count -= 1;
                     remainingBalance -= currentCoin.coinValue;
                     break;
                 }
             }
         }
+        return true;
     }
     selectProduct = (productNumber) => {
         let selectedProduct = this.productLookUp[parseInt(productNumber)];
@@ -91,8 +111,16 @@ class Vending {
         }
         else {
             if (this.balance > selectedProduct.price) {
+                if (selectedProduct.inventory === 0) {
+                    this.displayText = "SOLD OUT";
+                    return;
+                }
                 let remainingBalance = (((this.balance * 100) - (selectedProduct.price * 100)) / 100);
-                this.makeChange(remainingBalance);
+                let makeChangeRes = this.makeChange(remainingBalance);
+                if (!makeChangeRes) {
+                    this.displayText = "EXACT CHANGE ONLY";
+                    return;
+                }
             }
             selectedProduct.inventory -= 1;
             this.balance = 0;
