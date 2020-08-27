@@ -21,17 +21,17 @@ class Vending {
             { 
                 coinValue: 25,
                 coinName: "quarter",
-                count: 10  
+                coin: this.coinLookup.quarter
             },
             { 
                 coinValue: 10,
                 coinName: "dime",
-                count: 10 //0 - Last Test Scenario  
+                coin: this.coinLookup.dime
             },
             {
                 coinValue: 5,
                 coinName: "nickle",
-                count: 10 //1 - Last Test Scenario     
+                coin: this.coinLookup.nickle
             }
         ]
 
@@ -83,6 +83,7 @@ class Vending {
     }
 
     makeChange = (remainingBalance) => {
+        const initialRejectedCoins = [...this.rejectedCoins];
         remainingBalance = remainingBalance * 100
         while (remainingBalance > 0) {
             if (remainingBalance === 0) {
@@ -93,10 +94,11 @@ class Vending {
                 if (currentCoin.coinValue <= remainingBalance) {
                     this.rejectedCoins.push(currentCoin.coinName);
                     //for EXACT CHANGE ONLY scenario - Last TestCase
-                    if (currentCoin.count - 1 < 1) {
+                    if (currentCoin.coin.count - 1 < 1) {
+                        this.resetState(initialRejectedCoins);
                         return false;
                     }
-                    currentCoin.count -= 1;
+                    currentCoin.coin.count -= 1;
                     remainingBalance -= currentCoin.coinValue;
                     break;
                 }
@@ -104,6 +106,11 @@ class Vending {
         }
         return true;
     }
+
+    resetState = (initialRejectedCoins) => {
+        this.rejectedCoins = initialRejectedCoins;
+    }
+
     selectProduct = (productNumber) => {
         let selectedProduct = this.productLookUp[parseInt(productNumber)];
         if (this.balance < selectedProduct.price) {

@@ -188,14 +188,82 @@ describe("Select Product", () => {
     });
     
     //This works -- See comments and code from line#95-98 & Line#120-123
-    test.skip('should display EXACT CHANGE ONLY when the vending machine doesnt have exact coins', () => {
+    test('should display EXACT CHANGE ONLY when the vending machine does not have exact coins', () => {
         let vendingRef = new Vending();
+        
+        vendingRef.coinLookup.nickle.count = 1;
+        vendingRef.coinLookup.dime.count = 0;
+        vendingRef.coinLookup.quarter.count = 10;
+
+        vendingRef.coinReverseLookupArray[1].count = 0;
+        vendingRef.coinReverseLookupArray[2].count = 1;
+
         vendingRef.insertCoin('quarter');
         vendingRef.insertCoin('quarter');
         vendingRef.insertCoin('quarter');
         //vendingRef.insertCoin('dime'); //.85
         vendingRef.selectProduct(3);  //.65
         expect(vendingRef.getDisplay()).toBe("EXACT CHANGE ONLY");
+    });
+
+    //This works -- See comments and code from line#95-98 & Line#120-123
+    test('does not make change when vending machine does not have exact coins', () => {
+        let vendingRef = new Vending();
+        
+        vendingRef.coinLookup.nickle.count = 1;
+        vendingRef.coinLookup.dime.count = 0;
+        vendingRef.coinLookup.quarter.count = 10;
+
+        vendingRef.coinReverseLookupArray[1].count = 0;
+        vendingRef.coinReverseLookupArray[2].count = 1;
+
+        vendingRef.insertCoin('quarter');
+        vendingRef.insertCoin('quarter');
+        vendingRef.insertCoin('quarter');
+        //vendingRef.insertCoin('dime'); //.85
+        vendingRef.selectProduct(3);  //.65
+        expect(vendingRef.getChange()).toEqual([]);
+    });
+
+
+    //This works -- See comments and code from line#95-98 & Line#120-123
+    test('does not make change when vending machine does not have exact coins', () => {
+        let vendingRef = new Vending();
+        
+        vendingRef.coinLookup.nickle.count = 1;
+        vendingRef.coinLookup.dime.count = 0;
+        vendingRef.coinLookup.quarter.count = 10;
+
+        vendingRef.coinReverseLookupArray[1].count = 0;
+        vendingRef.coinReverseLookupArray[2].count = 1;
+
+        vendingRef.insertCoin('quarter');
+        vendingRef.insertCoin('quarter');
+        vendingRef.insertCoin('quarter');
+        vendingRef.insertCoin('penny');
+
+        //vendingRef.insertCoin('dime'); //.85
+        vendingRef.selectProduct(3);  //.65
+        expect(vendingRef.getChange()).toEqual(["penny"]);
+    });
+
+    test('should not change the number of coins when vending machine does not have exact coins', () => {
+        let vendingRef = new Vending();
+        
+        vendingRef.coinLookup.nickle.count = 1;
+        vendingRef.coinLookup.dime.count = 0;
+        vendingRef.coinLookup.quarter.count = 10;
+
+        vendingRef.insertCoin('quarter');
+        vendingRef.insertCoin('quarter');
+        vendingRef.insertCoin('quarter');
+        vendingRef.insertCoin('penny');
+
+        //vendingRef.insertCoin('dime'); //.85
+        vendingRef.selectProduct(3);  //.65
+        expect(vendingRef.coinLookup.nickle.count).toEqual(1);
+        expect(vendingRef.coinLookup.dime.count).toEqual(0);
+        expect(vendingRef.coinLookup.quarter.count).toEqual(13);
     });
 
 });
