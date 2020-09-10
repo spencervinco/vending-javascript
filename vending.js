@@ -86,9 +86,6 @@ class Vending {
         const initialRejectedCoins = [...this.rejectedCoins];
         remainingBalance = remainingBalance * 100
         while (remainingBalance > 0) {
-            if (remainingBalance === 0) {
-                break;
-            }
             for (let i = 0; i < this.coinReverseLookupArray.length; i++) {
                 const currentCoin = this.coinReverseLookupArray[i];
                 if (currentCoin.coinValue <= remainingBalance) {
